@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import find_filter_coefficients as find_fc
 import find_wavelet_coefficients as fwc
+from scipy.signal import butter, filtfilt, resample
 
 def read_data(dir, record_number, ch=0):
     """
@@ -24,7 +25,6 @@ def read_data(dir, record_number, ch=0):
     ecg_ann = rdann(record_name, extension='atr')
     return ecg_record, ecg_ann
 
-# TF????
 def period_normaliztion(y, num_samples):
     n = num_samples
     n_ = len(y)
@@ -42,6 +42,44 @@ def mean_rr_interval(r_peaks):
     
     return np.mean(rr_intervals)
 
+
+def lowpass(signal, cutoff, fs, order):
+    
+    nyquist = 0.5 * fs
+    normal_cutoff = cutoff / nyquist
+    b, a = butter(order, normal_cutoff, btype='low', output='ba', analog=False)[:2]
+    y = filtfilt(b, a, signal)
+    return np.array(y)
+
+
+def highpass(signal, cutoff, fs, order):
+
+    nyquist = 0.5 * fs
+    normal_cutoff = cutoff / nyquist
+    b, a = butter(order, normal_cutoff, btype='high', output='ba', analog=False)[:2]
+    y = filtfilt(b, a, signal)
+    return np.array(y)
+
+
+def filter_signal(signal, low_cut, high_cut, fs):
+    """
+    Find the signal without frequency components higher than 40Hz and less than 0.5Hz.
+
+    Args:
+        signal: Raw ECG Signal
+        fs: Sampling rate of the given raw ECG signal
+
+    Returns:
+        Signal without frequency components higher than 40Hz and less than 0.5Hz as an array
+
+    """
+    filtered_signal1 = lowpass(signal, cutoff=low_cut, fs=fs, order=5)
+    filtered_signal2 = highpass(signal, cutoff=high_cut, fs=fs, order=5)
+
+    filtered_ecg = signal - filtered_signal1 - filtered_signal2  # Subtract low frequency components and high
+    # frequency components from the original signal
+    return np.array(filtered_ecg)
+
 def load_mit_datset(records, classes):
 
     """
@@ -50,7 +88,7 @@ def load_mit_datset(records, classes):
     """
     fs = 360  # sampling rate of the MIT-BIH records
 
-    directory =  "C:\\Users\\tinal\\Desktop\\sem 7\\Bio Signal Processing\\paper implementation wawelet\\dataset\\mit-bih-arrhythmia-database-1.0.0\\" # path to the database
+    directory =  "C://Users//tinal//Desktop//sem 7//Bio Signal Processing//paper_imple_//dataset//mit-bih-arrhythmia-database-1.0.0//" # path to the database
     dataset = pd.DataFrame()
     X = []
     y = []
@@ -68,6 +106,7 @@ def load_mit_datset(records, classes):
 
         samples = ecg_annotations.sample
         ecg_signal = ecg_record.p_signal[:, 0]  # only take the first channel ( lead 1)
+        ecg_signal = filter_signal(ecg_signal, 0.5, 40, fs)  # filter the signal
         symbols = ecg_annotations.symbol
 
         beat_symbols = []
@@ -112,42 +151,3 @@ def load_mit_datset(records, classes):
     
     return dataset
     
-# return updated wavelet coefficients for new positions     
-def update_wavelet_coefficients(X_train,positions):
-
-    #  iFind FIR low-pass filter coefficients for each particle
-    S,d= positions.shape[0],positions.shape[1]
-    # Initializ an array of size [S,2*d]
-    lowpass_filter_bank = np.zeros((S,2*d))
-    highpass_filter_bank = np.zeros((S,2*d))
-
-    # find the low-pass filter coefficients for each particle   
-    for particle in range(S):
-        x = find_fc.lowpass_filter(positions[particle])
-        lowpass_filter_bank[particle] = x
-
-    # find high-pass filter coefficients for each particle from low-pass filter coefficients
-    for particle in range(S):
-        x = find_fc.high_pass_filter(lowpass_filter_bank[particle])
-        highpass_filter_bank[particle] = x 
-
-    # Perform DWT with custom filters and decomposition level 2
-    X_train_combined =[]
-    #training datawith morphological features
-    for j in range(S):
-        features = []
-        for i in range(X_train.shape[0]):
-            _,wavelet_coefficients = fwc.wavelet_coefficients(X_train.iloc[i,3:], lowpass_filter_bank[j], highpass_filter_bank[j], 2)
-            temporal_features= X_train.iloc[i,1:3]
-            features.append(np.concatenate((wavelet_coefficients,temporal_features)))
-        X_train_combined.append(features)
-
-    X_train_combined =np.array(X_train_combined)
-    # print("train set size",X_train_combined.shape)
-
-    return X_train_combined
-    
-###
-#load dataset
-# 1-3 temporal features
-# 3-303 features ECG beats  

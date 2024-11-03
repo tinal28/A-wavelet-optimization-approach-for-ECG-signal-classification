@@ -38,19 +38,17 @@ def fitness_function_grid_search(X,y):
 def fitness_function_CV(X,y):
     #initialize vector to store fitness values
     fitness_values = []
-
-
-    # Initialize fixed SVC model parameters
-    model = SVC(kernel='rbf', C=100, gamma='scale')  # Set C and gamma as desired
-
+    
     for i in range(X.shape[0]):
-        # Fit the grid search to the data
+        # Initialize fixed SVC model parameters
+        model = SVC(kernel='rbf', C=100, gamma='scale')  # Set C and gamma as desired
+        
+        # claculate cross validation score
         scores = cross_val_score(model, X[i, :, :], y, cv=5, scoring='accuracy')
 
-        # Get the best parameters and best score  
+        # Append the mean of the cross validation scores to the fitness values
         fitness_values.append(np.mean(scores))
         
 
     fitness_values = np.array(fitness_values)
-    print("fitness value is", np.mean(fitness_values) )
     return fitness_values
