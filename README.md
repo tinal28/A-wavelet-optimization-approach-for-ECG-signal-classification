@@ -3,7 +3,25 @@ Generating the wavelet that best represents the ECG beats in terms of discrimina
 
 ## Overview
 
-This project implements a wavelet optimization approach for ECG signal classification using Particle Swarm Optimization (PSO). The goal is to enhance the accuracy of classification by optimizing the parameters of wavelet transformations applied to the ECG signals.
+This projectpresents a novel method to enhance the classification accuracy of ECG signals by
+optimizing wavelet design specifically for this purpose. While traditional wavelets, such
+as Daubechies and Symlet, are widely used in ECG signal processing, the researchers
+believe that they do not provide the highest accuracy in classification tasks. Through this
+paper they addresses this limitation by proposing a new approach that integrates wavelet
+design with the classification process to achieve a better results.
+
+The proposed method utilizes the polyphase representation of wavelet filter banks, enabling wavelet to design through a set of angular parameters. These parameters are optimized using a Particle Swarm Optimization (PSO) algorithm to maximize the accuracy of
+ECG beat classification. The classification process uses a Support Vector Machine(SVM).
+The study incorporates both morphological and temporal features extracted from ECG
+signals, for the classification.
+The study validate their method using the MIT-BIH Arrhythmia Database, focusing
+on a subset of ECG recordings and classifying beats into six categories
+N (·) Normal beat
+L Left bundle branch block beat
+R Right bundle branch block beat
+A Atrial premature beat
+V Premature ventricular contraction
+/ Paced beat
 
 ## Requirements
 
