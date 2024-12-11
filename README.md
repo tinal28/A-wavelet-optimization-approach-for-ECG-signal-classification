@@ -16,12 +16,12 @@ The study incorporates both morphological and temporal features extracted from E
 signals, for the classification.
 The study validate their method using the MIT-BIH Arrhythmia Database, focusing
 on a subset of ECG recordings and classifying beats into six categories
-N (·) Normal beat
-L Left bundle branch block beat
-R Right bundle branch block beat
-A Atrial premature beat
-V Premature ventricular contraction
-/ Paced beat
+N (·) (Normal beat),
+L (Left bundle branch block beat),
+R (Right bundle branch block beat),
+A (Atrial premature beat),
+V (Premature ventricular contraction),
+/ (Paced beat),
 
 ## Requirements
 
