@@ -25,7 +25,7 @@ V (Premature ventricular contraction),
 
 ## Requirements
 
-Make sure you have Python installed along with the necessary libraries. You can install the required libraries using:
+Make sure you have Python installed along with the necessary libraries. 
 
 ## Functionality
 Data Loading: Load ECG signal data from the MIT-BIH database.
@@ -34,9 +34,10 @@ Create custom wavelets using sherlock Monro Algorithm
 Wavelet Transformation: Apply wavelet decomposition to the ECG signals.
 Optimize the parameters of wavelet transformation using Particle Swarm Optimization (PSO).
 Classification: Evaluate the classification performance using k-fold cross validation using SVM.
+![image](https://github.com/user-attachments/assets/57a21939-e1ec-45b9-a142-5ae13b4ec2b1)
 
 ## Results
-After 20 iterations the generated mother wavelet is displayed below.
+After 20 iterations a generated mother wavelet is displayed below.
 ![mother wavelet for best accuracy](https://github.com/user-attachments/assets/01893bd9-da62-40da-9d39-19a5897f62b1)
 
 ## References
